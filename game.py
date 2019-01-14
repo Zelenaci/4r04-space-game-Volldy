@@ -14,13 +14,13 @@ window = pyglet.window.Window(1000, 800)
 batch = pyglet.graphics.Batch()   # pro optimalizované vyreslování objektů
 
 
-class stone(object):
+class Stone(object):
 
     def __init__(self, x=None, y=None, direction=None, speed=None, rspeed=None):
 
         # nečtu obrázek
-        num = random.choice(range(0, 20))
-        self.image = pyglet.image.load('meteorit.png'.format(num))
+        num = random.choice(range(0, 10))
+        self.image = pyglet.image.load('meteorit.png')
 
         # střed otáčení dám na střed obrázku
         self.image.anchor_x = self.image.width // 2
@@ -51,7 +51,7 @@ class stone(object):
         self.y += dt * self.speed * sin(pi / 2 - radians(self.direction))
         self.sprite.y = self.y
         self.sprite.rotation += 0.01 * self.rspeed
-
+        
         
 
 
@@ -92,6 +92,7 @@ class Lodicka(object):
         self.y = 400
         self.sprite.x = self.x
         self.sprite.y = self.y
+
     def tiktak(self, t):
         global klavesy
         self.okraj()
@@ -102,51 +103,54 @@ class Lodicka(object):
             if data == RIGHT:
                 self.sprite.rotation += 5
             if data ==  UP:
-                self.x = sprite.x + self.speed*t*sin(pi*self.sprite.rotation/180)
+                self.x = self.x + self.speed*t*sin(pi*self.sprite.rotation/180)
                 self.sprite.x = self.x
                 self.y = self.y + self.speed*t*cos(pi*self.sprite.rotation/180)
                 self.sprite.y = self.y
             if data == DOWN:
-                self.x = sprite.x + self.speed*t-sin(pi*self.sprite.rotation/180)
+                self.x = self.x + self.speed*t-sin(pi*self.sprite.rotation/180)
                 self.sprite.x = self.x
                 self.y = self.y + self.speed*t-cos(pi*self.sprite.rotation/180)
                 self.sprite.y = self.y
-            if data == NUM_1:
-                self.speed += 60
-            if data == NUM_2:
-                self.speed = 400
+            
 
     def okraj(self):
         # vzdálenost okraje od střed
         rozmer = min(self.obrazek.width, self.obrazek.height)/2
         if self.x + rozmer >= window.width + 60:
             self.sprite.x =- 20
-        if self-x - rozmer < -60:
+        if self.x - rozmer < -60:
             self.sprite.x = window.width + 20
         if self.y + rozmer >= window.height + 60:
             self.sprite.y =- 20
-        if selx.y - rozmer < -60:
+        if self.y - rozmer < -60:
             self.sprite.y = window.height + 20
 
-klavesy = set()
+klavesy = []
 for o in range(1):
     lod = Lodicka()
-    pyglet.clock.schedule_interval(lod.tiktak, 1/30)
+    pyglet.clock.schedule_interval(lod.tiktak, 1/120)
 
-for x in range(15):
-    stone = stone()
-    pyglet.clock.schedule_interval(stone.tick, 1/30)
+for x in range(5):
+    kamen = Stone()
+    pyglet.clock.schedule_interval(kamen.tick, 1/120)
     
 @window.event
 def on_key_release(data, mod):
     global klavesy
     klavesy.remove(data)
 
+@window.event
+def on_key_press(data, mod):
+    global klavesy
+    klavesy.append(data)
+
 
 @window.event
 def on_draw():
-    window.clear
-    image.blit(0,0)
+    window.clear()
+    #image.blit(0,0)
     batch.draw()
+
 
 pyglet.app.run()
